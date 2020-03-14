@@ -27,7 +27,7 @@ for (i = 0; i < liItems.length; i++){
 
 那么如何实现点击`<li></li>` 标签打印出是第几个标签呢？
 
-和实现闭包如出一辙，利用 `var` 生命的变量在函数内的作用域，通过匿名立即执行函数来实现，如下述代码所示；
+和实现闭包如出一辙，利用 `var` 声明的变量在函数内的作用域，通过匿名立即执行函数来实现，如下述代码所示；
 ```javascript
 var i
 for (i = 0; i < liItems.length; i++){
@@ -67,4 +67,12 @@ for (var i = 0; i < liItems.length; i++){
 ```
 这样一来，整个代码结构中存在 `liItems,length` 个 `j`，自然打印出来的是不同的 `j`。
 
-
+而如果这样实现呢？
+```javascript
+for (let i = 0; i < liItems.length; i++){
+    liItems[i].onclick = function() {
+      console.log(i)
+    }
+}
+```
+我们会发现也可以实现上述需求，这是因为 `JavaScript` 自动在 `for` 循环的循环体中帮我们声明了一个 `let` 变量 `i`，且其值为循环体外的 `i`,并在循环体的最后把 循环体内的 `i` 的 值赋值给循环体外的 `i`；整个代码结构中存在 `liItems,length + 1` 个 `i`。
