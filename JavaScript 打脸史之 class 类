@@ -1,0 +1,120 @@
+## JavaScript 打脸史之 class
+
+众所周知，`JavaScript` 是一种基于对象的语言，对象无处不在，但是它又不是一种真正面向对象的语言，因为在 `ES6` 之前，`JavaScript` 连 `class` 都没有。
+
+故事的一且都要从 `JavaScript` 的诞生说起，网景公司需要设计一款简单，且随和当时盛行的 `C++` 和 `Java` 语言风格的语言，即 `JavaScript`。
+
+网景公司负责开发这门语言的工程师 `Brendan Eich`，为了简单的实现对象机制，放弃使用 `class`，而把函数作为类；跟风`C++` 和 `Java` 语言风格，使用 `new` 来新建对象；使用 `prototype` 实现继承
+
+```javascript
+function Animal(name){
+    this.name = name
+}
+
+Animal.prototype = { type : 'animal' }
+let dog = new Animal('狗')
+let cat = new Animal('猫')
+
+console.log(dog.name)   //狗
+console.log(dog.type)   //animal
+console.log(cat.name)   //猫
+console.log(cat.type)   //animal
+```
+我们都知道继承是面向对象的一个重要概念，`Javascript` 如何实现继承呢？
+
+方法一： 通过在类函数体中调用父类函数本身实现；
+```javascript
+function Animal(){
+    this.type = 'animal'
+}
+
+function Dog(name, color){
+    Animal.apply(this, arguments)
+    this.name = name;
+    this.color = color
+}
+
+let dog = new Dog('jack', 'white')
+console.log(dog.type)   //animal
+```
+方法二： 通过使子类的 `prototype` 对象指向一个父类的实例；
+```javascript
+function Animal(){
+    this.type = 'animal'
+}
+
+function Dog(name, color){
+    this.name = name
+    this.color = color
+}
+Dog.prototype = new Animal()
+Dog.prototype.constructor = Dog
+
+let dog = new Dog('jack', 'white')
+console.log(dog.type)   //animal
+```
+方法三： 通过父类不变的属性写入 `prototype`,子类直接继承 `prototype` 来实现；
+```javascript
+function Animal(){}
+Animal.prototype.type = "animal"
+
+function Dog(name, color){
+    this.name = name
+    this.color = color
+}
+Dog.prototype = Animal.prototype  //导致二者共用一个对象
+Dog.prototype.constructor = Dog
+
+let dog = new Dog('jack', 'white')
+console.log(dog.type)   //animal
+```
+方法四： 利用空对象改进方法三；
+```javascript
+function Animal(){}
+Animal.prototype.type = "animal"
+
+function Dog(name, color){
+    this.name = name
+    this.color = color
+}
+let I = function(){}
+I.prototype = Animal.prototype
+Dog.prototype = new I()
+Dog.prototype.constructor = Dog
+
+let dog = new Dog('jack', 'white')
+console.log(dog.type)   //animal
+```
+看完这些， `Brendan Eich` 在你耳边骄傲的喊了一句：“JavaScript 对象继承怎么样，麻烦吧？，我设计的”。
+
+而 `ES6` 推出 `class`后，让开发者告别了使用 prototype 模仿面向对象的时代。但其并不是真正的类的概念，依旧换汤不换药。
+```javascript
+class Animal {}
+typeof Animal   //function
+```
+是的，`class` 只是个壳，背后还是 `prototype`;算是针对面向对象与对象继承语法糖，称不上打脸史的话也可以算做填坑史。
+
+`class` 写法如下；
+```javascript
+class Point {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  toString() {
+    return '(' + this.x + ', ' + this.y + ')';
+  }
+}
+
+class ColorPoint extends Point {
+  constructor(x, y, color) {
+    super(x, y); // 调用父类的constructor(x, y)
+    this.color = color;
+  }
+  toString() {
+    return this.color + ' ' + super.toString(); // 调用父类的toString()
+  }
+}
+```
+
+完。
