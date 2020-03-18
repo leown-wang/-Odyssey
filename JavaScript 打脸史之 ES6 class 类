@@ -1,4 +1,4 @@
-## JavaScript 打脸史之 class
+## JavaScript 打脸史之 class 类
 
 众所周知，`JavaScript` 是一种基于对象的语言，对象无处不在，但是它又不是一种真正面向对象的语言，因为在 `ES6` 之前，`JavaScript` 连 `class` 都没有。
 
